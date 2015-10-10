@@ -936,7 +936,10 @@ cdef class Message:
         elif t == 'd':
             lo_message_add_double(self._message, float(value))
         elif t == 'c':
-            lo_message_add_char(self._message, ord(value))
+            if(len(value) == 0):
+                lo_message_add_char(self._message, 0)
+            else:
+                lo_message_add_char(self._message, ord(value))
         elif t == 's':
             s = _encode(value)
             lo_message_add_string(self._message, s)

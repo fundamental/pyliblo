@@ -111,6 +111,17 @@ class ServerTestCase(ServerTestCaseBase):
         self.assertEqual(self.cb.args[5], None)
         self.assertEqual(self.cb.args[6], float('inf'))
 
+    def testSendNullChar(self):
+        self.server.add_method('/get-your-nulls-here', 'c', self.callback)
+        self.server.send(1234, '/get-your-nulls-here', ('c', "\0"))
+        self.assertTrue(self.server.recv())
+        self.assertEqual(self.cb.types, 'c')
+        self.assertAlmostEqual(self.cb.args[0], '\0')
+        self.server.send(1234, '/get-your-nulls-here', ('c', ""))
+        self.assertTrue(self.server.recv())
+        self.assertEqual(self.cb.types, 'c')
+        self.assertAlmostEqual(self.cb.args[0], '\0')
+
     def testSendMessage(self):
         self.server.add_method('/blah', 'is', self.callback)
         m = liblo.Message('/blah', 42, 'foo')
